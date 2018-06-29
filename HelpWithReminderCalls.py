@@ -3,6 +3,10 @@
 import pyperclip, info
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from datetime import datetime
+#Used to fix broken pip error
+from signal import signal, SIGPIPE, SIG_DFL
+signal(SIGPIPE,SIG_DFL) 
 
 url = 'https://secure.acuityscheduling.com/login.php'
 
@@ -83,13 +87,14 @@ for elem in browser.find_elements_by_class_name(appointment_button_class):
     pyperclip.copy(note)
     print('Note for client copied to clipboard')
 
+    input("Press enter after text has been sent")
     #Edit the note
     click_edit_button()
 
-    appt_note = ''
+     
+    appt_note = datetime.now().strftime("%m/%d %I:%M %p ~ Reminder text sent to client")
     edit_note_text(appt_note)
 
-    #click_save_button()
+    click_save_button()
 
-    #return_to_appointments()
-    break
+    return_to_appointments()
