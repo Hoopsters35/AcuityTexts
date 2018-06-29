@@ -1,13 +1,13 @@
 #! /usr/bin/env python
 
-import pyperclip
+import pyperclip, login
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 url = 'https://secure.acuityscheduling.com/login.php'
 
-username = input('Enter Username: ')
-password = input('Enter Password: ')
+username = login.login.username
+password = login.login.password
 
 browser = webdriver.Firefox()
 browser.get(url)
