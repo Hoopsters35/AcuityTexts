@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import pyperclip, login
+import pyperclip, info
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
@@ -28,10 +28,10 @@ def click_edit_button():
 
 def login():
     user_slot = browser.find_element_by_css_selector('input.input-email')
-    user_slot.send_keys(login.login.username)
+    user_slot.send_keys(info.login.username)
 
     pass_slot = browser.find_element_by_css_selector('input.input-password')
-    pass_slot.send_keys(login.login.password)
+    pass_slot.send_keys(info.login.password)
 
     login_button = browser.find_element_by_css_selector('input.input-login')
     login_button.click()
@@ -39,14 +39,27 @@ def login():
 def click_save_button():
     browser.find_element_by_css_selector(save_button_css).click()
 
+def get_formatted_name():
+    first_name = browser.find_element_by_css_selector('input[name="first_name"]').get_attribute('value').lower()
+    first_name = first_name[0].upper() + first_name[1:]
+    last_name = browser.find_element_by_css_selector('input[name="last_name"]').get_attribute('value').lower()
+    last_name = last_name[0].upper() + last_name[1:]
+    if (last_name[0:2] is 'mc'):
+        last_name = last_name[:2] + last_name[2].upper() + last_name[3:]
+    return ' '.join([first_name, last_name])
+
 def get_custom_note():
-    return ""
+    base_message = "Hello, {pat_name}, my name is {my_name} with {dr_name}. I am texting to remind you about your {type_of_appt} appointment from {time} on {date} at {location}. Please call or text me back to confirm or cancel your appointment. Thank you!"
+    pat_name = get_formatted_name()
+    appt_time = browser.find_element_by_css_selector('div.col-sm-4').text
+    appt_date = browser.find_element_by_css_selector('div.col-xs-7').text
+    formats = {'pat_name': pat_name, 'my_name' : info.apptinfo.my_name, 'dr_name' : info.apptinfo.dr_name, 'type_of_appt': info.apptinfo.appt_type, 'time': appt_time, 'date': appt_date, 'location': info.apptinfo.address}
+    return base_message.format(**formats)
     
-def edit_note_text():
+def edit_note_text(note):
     note_text_area = browser.find_element_by_id('appt-notes')
     note_text_area.send_keys(Keys.CONTROL + Keys.END)
     note_text_area.send_keys(Keys.RETURN, Keys.RETURN)
-    note = get_custom_note()
     note_text_area.send_keys(note)
 
 def return_to_appointments():
@@ -63,16 +76,20 @@ for elem in browser.find_elements_by_class_name(appointment_button_class):
     #Copy patient's phone number
     copy_phone_num()
 
-    #Get a custom reminder message for the client
+    input('Press enter to get custom note for client')
 
-    #input('Enter the type of call: ')
+    #Get a custom reminder message for the client
+    note = get_custom_note()
+    pyperclip.copy(note)
+    print('Note for client copied to clipboard')
 
     #Edit the note
     click_edit_button()
 
-    edit_note_text()
+    appt_note = ''
+    edit_note_text(appt_note)
 
-    click_save_button()
+    #click_save_button()
 
-    return_to_appointments()
+    #return_to_appointments()
     break
