@@ -15,16 +15,18 @@ browser_acuity.get(url_acuity)
 
 #Used CSS for acuity
 appointment_button_class = 'appointment'
-edit_note_button_css = '.edit-appointment-notes a.btn'
+edit_note_button_css = '.edit-appointment-notes > a.btn'
 save_button_css = "input[value='Save Changes']"
 
 def copy_phone_num():
+    #TODO: use regex instead of string slice as there could be >1 number
     phone_num = browser_acuity.find_element_by_css_selector('span a.real-link').get_attribute('href')[4:]
     pyperclip.copy(phone_num)
     print('Phone number: {} copied to clipboard'.format(phone_num))
 
 def click_edit_button():
     edit_button = browser_acuity.find_element_by_css_selector(edit_note_button_css)
+    print(edit_button)
     actions = webdriver.ActionChains(browser_acuity)
     actions.move_to_element(edit_button)
     actions.click(edit_button)
@@ -55,8 +57,11 @@ def get_formatted_name():
 def get_custom_note():
     base_message = "Hello, {pat_name}, my name is {my_name} with {dr_name}. I am texting to remind you about your {type_of_appt} appointment from {time} on {date} at {location}. Please call or text me back to confirm or cancel your appointment. Thank you!"
     pat_name = get_formatted_name()
+    print('Retrieved patient name')
     appt_time = browser_acuity.find_element_by_css_selector('div.col-sm-4').text
+    print('Retrieved appointment time')
     appt_date = browser_acuity.find_element_by_css_selector('div.col-xs-7').text
+    print('Retrieved appointment date')
     formats = {'pat_name': pat_name, 'my_name' : info.apptinfo.my_name, 'dr_name' : info.apptinfo.dr_name, 'type_of_appt': info.apptinfo.appt_type, 'time': appt_time, 'date': appt_date, 'location': info.apptinfo.address}
     return base_message.format(**formats)
     
@@ -73,28 +78,37 @@ def return_to_appointments():
 login()
 
 #Get a patient's box
+appointments_elems = browser_acuity.find_elements_by_class_name(appointment_button_class)
+appointments = list(map(lambda x : x.get_attribute('id'), appointments_elems))
+print(appointments)
+with open('calls.txt', 'w') as textfile:
+    for id in appointments:
+        elem = browser_acuity.find_element_by_id(id)
+        elem.click()
 
-for elem in browser_acuity.find_elements_by_class_name(appointment_button_class):
-    elem.click()
+        #Copy patient's phone number
+        copy_phone_num()
+        textfile.write('Phome number: {}'.format(pyperclip.paste()))
 
-    #Copy patient's phone number
-    copy_phone_num()
+        #input('Press enter to get custom note for client')
 
-    input('Press enter to get custom note for client')
+        #Get a custom reminder message for the client
+        print('Getting custom note...')
+        note = get_custom_note()
+        print('Copying note...')
+        pyperclip.copy(note)
+        print('Note for client copied to clipboard')
+        textfile.write(pyperclip.paste() + "\n")
 
-    #Get a custom reminder message for the client
-    note = get_custom_note()
-    pyperclip.copy(note)
-    print('Note for client copied to clipboard')
+        #input("Press enter after text has been sent")
+        #Edit the note
+        click_edit_button()
 
-    input("Press enter after text has been sent")
-    #Edit the note
-    click_edit_button()
+        
+        appt_note = datetime.now().strftime("%m/%d %I:%M %p ~ Reminder text sent to client")
+        #edit_note_text(appt_note)
+        textfile.write(appt_note + "\n\n")
 
-     
-    appt_note = datetime.now().strftime("%m/%d %I:%M %p ~ Reminder text sent to client")
-    edit_note_text(appt_note)
+        click_save_button()
 
-    click_save_button()
-
-    return_to_appointments()
+        return_to_appointments()
