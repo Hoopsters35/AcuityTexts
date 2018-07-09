@@ -20,17 +20,19 @@ save_button_css = "input[value='Save Changes']"
 
 def copy_phone_num():
     #TODO: use regex instead of string slice as there could be >1 number
-    phone_num = browser_acuity.find_element_by_css_selector('span a.real-link').get_attribute('href')[4:]
+    phone_num = browser_acuity.find_element_by_css_selector('div.row.appt-info a.real-link').get_attribute('href')[4:]
     pyperclip.copy(phone_num)
     print('Phone number: {} copied to clipboard'.format(phone_num))
 
-def click_edit_button():
-    edit_button = browser_acuity.find_element_by_css_selector(edit_note_button_css)
-    print(edit_button)
+def hover_over_elem(elem):
     actions = webdriver.ActionChains(browser_acuity)
     actions.move_to_element(edit_button)
     actions.click(edit_button)
     actions.perform()
+
+def click_edit_button():
+    edit_button = browser_acuity.find_element_by_css_selector(edit_note_button_css)
+    hover_over_elem(edit_button)
 
 def login():
     user_slot = browser_acuity.find_element_by_css_selector('input.input-email')
@@ -88,7 +90,7 @@ with open('calls.txt', 'w') as textfile:
 
         #Copy patient's phone number
         copy_phone_num()
-        textfile.write('Phome number: {}'.format(pyperclip.paste()))
+        textfile.write('Phome number: {}\n'.format(pyperclip.paste()))
 
         #input('Press enter to get custom note for client')
 
