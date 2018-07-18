@@ -6,7 +6,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from datetime import datetime
 from time import sleep
 #Used to fix broken pipe error on Linux
 #from signal import signal, SIGPIPE, SIG_DFL

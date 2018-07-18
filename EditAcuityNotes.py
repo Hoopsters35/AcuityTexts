@@ -1,6 +1,9 @@
 import info
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from datetime import datetime
 from time import sleep
 
@@ -30,17 +33,17 @@ def hover_over_elem(elem):
     actions.perform()
 
 def click_edit_button():
-    edit_button = browser_acuity.find_element_by_css_selector(edit_note_button_css)
+    edit_button = WebDriverWait(browser_acuity, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, edit_note_button_css)))
     hover_over_elem(edit_button)
  
 def click_save_button():
     browser_acuity.find_element_by_css_selector(save_button_css).click()
 
 def return_to_appointments():
-    browser_acuity.find_element_by_css_selector('a[href="/appointments.php"]').click()
+    WebDriverWait(browser_acuity, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href="/appointments.php"]'))).click()
 
 def edit_note_text(note):
-    note_text_area = browser_acuity.find_element_by_id('appt-notes').click()
+    note_text_area = WebDriverWait(browser_acuity, 10).until(EC.presence_of_element_located((By.ID, 'appt-notes')))
     note_text_area.send_keys(Keys.CONTROL + Keys.END)
     note_text_area.send_keys(Keys.RETURN, Keys.RETURN)
     note_text_area.send_keys(note)
@@ -53,10 +56,8 @@ appointments_elems = browser_acuity.find_elements_by_class_name(appointment_butt
 appointments = list(map(lambda x : x.get_attribute('id'), appointments_elems))
 
 for id in appointments:
-    elem = browser_acuity.find_element_by_id(id)
+    elem = WebDriverWait(browser_acuity, 10).until(EC.presence_of_element_located((By.ID, id)))
     elem.click()
-    #Wait for the element to load
-    sleep(0.3)
 
     appt_note = datetime.now().strftime("%m/%d %I:%M %p ~ Reminder text sent to client")
 
@@ -66,4 +67,5 @@ for id in appointments:
 
     click_save_button()
 
+    sleep(0.2)
     return_to_appointments()
