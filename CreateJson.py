@@ -3,6 +3,9 @@
 import info, json
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from datetime import datetime
 from time import sleep
 #Used to fix broken pipe error on Linux
@@ -31,9 +34,9 @@ def login():
     login_button = browser_acuity.find_element_by_css_selector('input.input-login')
     login_button.click()
 
-def copy_phone_num():
+def get_phone_num():
     #TODO: use regex instead f string slice as there could be >1 number
-    phone_num = browser_acuity.find_element_by_css_selector('a[href^="tel:"]').get_attribute('href')[4:]
+    phone_num = WebDriverWait(browser_acuity, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href^="tel:"]'))).get_attribute('href')[4:]
     return phone_num
 
 def get_formatted_name():
@@ -57,7 +60,8 @@ def get_custom_note():
     return base_message.format(**formats)
 
 def return_to_appointments():
-    browser_acuity.find_element_by_css_selector('a[href="/appointments.php"]').click()
+    backbtn = WebDriverWait(browser_acuity, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href="/appointments.php"]')))
+    backbtn.click()
 
 #Log in
 login()
@@ -70,21 +74,18 @@ for id in appointments:
     person = {}
     people.append(person)
 
-    elem = browser_acuity.find_element_by_id(id)
+    elem = WebDriverWait(browser_acuity, 10).until(EC.presence_of_element_located((By.ID, id)))
     elem.click()
-    #Wait for the element to load
-    sleep(0.3)
 
     #Copy patient's phone number
     print('Getting phone number...')
-    phone_num = copy_phone_num()
+    phone_num = get_phone_num()
     person['phone_num'] = phone_num
 
     #Get a custom reminder message for the client
     print('Getting custom note...')
     note = get_custom_note()
     person['message'] = note
-
 
     sleep(0.2)
     return_to_appointments()
