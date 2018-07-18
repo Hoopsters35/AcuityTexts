@@ -58,7 +58,7 @@ def get_formatted_name():
     return ' '.join([first_name, last_name])
 
 def get_custom_note():
-    base_message = "Hello, {pat_name}, my name is {my_name} with {dr_name}. I am texting to remind you about your {type_of_appt} appointment from {time} on {date} at {location}. Please call or text me back to confirm or cancel your appointment. Thank you!"
+    base_message = "Hello, {pat_name}, my name is {my_name} speaking on behalf of {dr_name}. I am texting to remind you about your {type_of_appt} appointment from {time} on {date} at {location}. Please call or text me back to confirm or cancel your appointment. Thank you!"
     pat_name = get_formatted_name()
     print('Retrieved patient name')
     appt_time = browser_acuity.find_element_by_css_selector('div.col-sm-4').text
@@ -69,7 +69,7 @@ def get_custom_note():
     return base_message.format(**formats)
     
 def edit_note_text(note):
-    note_text_area = browser_acuity.find_element_by_id('appt-notes')
+    note_text_area = browser_acuity.find_element_by_id('appt-notes').click()
     note_text_area.send_keys(Keys.CONTROL + Keys.END)
     note_text_area.send_keys(Keys.RETURN, Keys.RETURN)
     note_text_area.send_keys(note)
