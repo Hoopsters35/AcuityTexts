@@ -93,7 +93,7 @@ with open('calls.txt', 'w') as textfile:
 
         #Copy patient's phone number
         copy_phone_num()
-        textfile.write('Phome number: {}\n'.format(pyperclip.paste()))
+        textfile.write('{}\n'.format(pyperclip.paste()))
 
         #input('Press enter to get custom note for client')
 
