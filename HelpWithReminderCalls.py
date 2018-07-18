@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import pyperclip, info
+import info
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from datetime import datetime
@@ -22,8 +22,7 @@ save_button_css = "input[value='Save Changes']"
 def copy_phone_num():
     #TODO: use regex instead f string slice as there could be >1 number
     phone_num = browser_acuity.find_element_by_css_selector('a[href^="tel:"]').get_attribute('href')[4:]
-    pyperclip.copy(phone_num)
-    print('Phone number: {} copied to clipboard'.format(phone_num))
+    return phone_num
 
 def hover_over_elem(elem):
     actions = webdriver.ActionChains(browser_acuity)
@@ -89,31 +88,26 @@ with open('calls.txt', 'w') as textfile:
         elem = browser_acuity.find_element_by_id(id)
         elem.click()
         #Wait for the element to load
-        sleep(0.1)
+        sleep(0.2)
 
         #Copy patient's phone number
-        copy_phone_num()
-        textfile.write('{}\n'.format(pyperclip.paste()))
-
-        #input('Press enter to get custom note for client')
+        phone_num = copy_phone_num()
+        textfile.write('{}\n'.format(phone_num))
 
         #Get a custom reminder message for the client
         print('Getting custom note...')
         note = get_custom_note()
-        print('Copying note...')
-        pyperclip.copy(note)
-        print('Note for client copied to clipboard')
-        textfile.write(pyperclip.paste() + "\n")
+        textfile.write(note + "\n")
 
         #input("Press enter after text has been sent")
         #Edit the note
-        click_edit_button()
+        #click_edit_button()
 
         
-        appt_note = datetime.now().strftime("%m/%d %I:%M %p ~ Reminder text sent to client")
+        #appt_note = datetime.now().strftime("%m/%d %I:%M %p ~ Reminder text sent to client")
         #edit_note_text(appt_note)
-        textfile.write(appt_note + "\n\n")
+        #textfile.write(appt_note + "\n\n")
 
-        click_save_button()
-
+        #click_save_button()
+        sleep(0.2)
         return_to_appointments()
