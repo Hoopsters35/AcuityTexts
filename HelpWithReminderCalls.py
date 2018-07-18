@@ -4,9 +4,10 @@ import pyperclip, info
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from datetime import datetime
-#Used to fix broken pip error
-from signal import signal, SIGPIPE, SIG_DFL
-signal(SIGPIPE,SIG_DFL) 
+from time import sleep
+#Used to fix broken pipe error on Linux
+#from signal import signal, SIGPIPE, SIG_DFL
+#signal(SIGPIPE,SIG_DFL) 
 
 url_acuity = 'https://secure.acuityscheduling.com/login.php'
 
@@ -19,15 +20,15 @@ edit_note_button_css = '.edit-appointment-notes > a.btn'
 save_button_css = "input[value='Save Changes']"
 
 def copy_phone_num():
-    #TODO: use regex instead of string slice as there could be >1 number
-    phone_num = browser_acuity.find_element_by_css_selector('div.row.appt-info a.real-link').get_attribute('href')[4:]
+    #TODO: use regex instead f string slice as there could be >1 number
+    phone_num = browser_acuity.find_element_by_css_selector('a[href^="tel:"]').get_attribute('href')[4:]
     pyperclip.copy(phone_num)
     print('Phone number: {} copied to clipboard'.format(phone_num))
 
 def hover_over_elem(elem):
     actions = webdriver.ActionChains(browser_acuity)
-    actions.move_to_element(edit_button)
-    actions.click(edit_button)
+    actions.move_to_element(elem)
+    actions.click(elem)
     actions.perform()
 
 def click_edit_button():
@@ -87,6 +88,8 @@ with open('calls.txt', 'w') as textfile:
     for id in appointments:
         elem = browser_acuity.find_element_by_id(id)
         elem.click()
+        #Wait for the element to load
+        sleep(0.1)
 
         #Copy patient's phone number
         copy_phone_num()
