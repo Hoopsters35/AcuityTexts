@@ -1,5 +1,6 @@
 *
 
 !gitignore
-!HelpWithReminderCalls.py
-!GetNotes.py
+!CreateJson.py
+!GetAppointmentInfo.py
+!EditAcuityNotes.py

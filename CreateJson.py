@@ -21,21 +21,6 @@ appointment_button_class = 'appointment'
 edit_note_button_css = '.edit-appointment-notes > a.btn'
 save_button_css = "input[value='Save Changes']"
 
-def copy_phone_num():
-    #TODO: use regex instead f string slice as there could be >1 number
-    phone_num = browser_acuity.find_element_by_css_selector('a[href^="tel:"]').get_attribute('href')[4:]
-    return phone_num
-
-def hover_over_elem(elem):
-    actions = webdriver.ActionChains(browser_acuity)
-    actions.move_to_element(elem)
-    actions.click(elem)
-    actions.perform()
-
-def click_edit_button():
-    edit_button = browser_acuity.find_element_by_css_selector(edit_note_button_css)
-    hover_over_elem(edit_button)
-
 def login():
     user_slot = browser_acuity.find_element_by_css_selector('input.input-email')
     user_slot.send_keys(info.login.username)
@@ -46,8 +31,10 @@ def login():
     login_button = browser_acuity.find_element_by_css_selector('input.input-login')
     login_button.click()
 
-def click_save_button():
-    browser_acuity.find_element_by_css_selector(save_button_css).click()
+def copy_phone_num():
+    #TODO: use regex instead f string slice as there could be >1 number
+    phone_num = browser_acuity.find_element_by_css_selector('a[href^="tel:"]').get_attribute('href')[4:]
+    return phone_num
 
 def get_formatted_name():
     first_name = browser_acuity.find_element_by_css_selector('input[name="first_name"]').get_attribute('value').lower()
@@ -68,12 +55,6 @@ def get_custom_note():
     print('Retrieved appointment date')
     formats = {'pat_name': pat_name, 'my_name' : info.apptinfo.my_name, 'dr_name' : info.apptinfo.dr_name, 'type_of_appt': info.apptinfo.appt_type, 'time': appt_time, 'date': appt_date, 'location': info.apptinfo.address}
     return base_message.format(**formats)
-    
-def edit_note_text(note):
-    note_text_area = browser_acuity.find_element_by_id('appt-notes').click()
-    note_text_area.send_keys(Keys.CONTROL + Keys.END)
-    note_text_area.send_keys(Keys.RETURN, Keys.RETURN)
-    note_text_area.send_keys(note)
 
 def return_to_appointments():
     browser_acuity.find_element_by_css_selector('a[href="/appointments.php"]').click()
@@ -84,7 +65,7 @@ login()
 #Get a patient's box
 appointments_elems = browser_acuity.find_elements_by_class_name(appointment_button_class)
 appointments = list(map(lambda x : x.get_attribute('id'), appointments_elems))
-print(appointments)
+
 for id in appointments:
     person = {}
     people.append(person)
@@ -95,6 +76,7 @@ for id in appointments:
     sleep(0.3)
 
     #Copy patient's phone number
+    print('Getting phone number...')
     phone_num = copy_phone_num()
     person['phone_num'] = phone_num
 
@@ -103,16 +85,7 @@ for id in appointments:
     note = get_custom_note()
     person['message'] = note
 
-    #input("Press enter after text has been sent")
-    #Edit the note
-    #click_edit_button()
 
-    
-    #appt_note = datetime.now().strftime("%m/%d %I:%M %p ~ Reminder text sent to client")
-    #edit_note_text(appt_note)
-    #textfile.write(appt_note + "\n\n")
-
-    #click_save_button()
     sleep(0.2)
     return_to_appointments()
 
