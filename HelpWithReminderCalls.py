@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import info
+import info, json
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from datetime import datetime
@@ -8,6 +8,8 @@ from time import sleep
 #Used to fix broken pipe error on Linux
 #from signal import signal, SIGPIPE, SIG_DFL
 #signal(SIGPIPE,SIG_DFL) 
+
+people = []
 
 url_acuity = 'https://secure.acuityscheduling.com/login.php'
 
@@ -85,18 +87,23 @@ appointments = list(map(lambda x : x.get_attribute('id'), appointments_elems))
 print(appointments)
 with open('calls.txt', 'w') as textfile:
     for id in appointments:
+        person = {}
+        people.append(person)
+
         elem = browser_acuity.find_element_by_id(id)
         elem.click()
         #Wait for the element to load
-        sleep(0.2)
+        sleep(0.3)
 
         #Copy patient's phone number
         phone_num = copy_phone_num()
+        person['phone_num'] = phone_num
         textfile.write('{}\n'.format(phone_num))
 
         #Get a custom reminder message for the client
         print('Getting custom note...')
         note = get_custom_note()
+        person['message'] = note
         textfile.write(note + "\n")
 
         #input("Press enter after text has been sent")
@@ -111,3 +118,6 @@ with open('calls.txt', 'w') as textfile:
         #click_save_button()
         sleep(0.2)
         return_to_appointments()
+
+with open('people.json', 'w') as jsonfile:
+    json.dump(people, jsonfile)
