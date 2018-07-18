@@ -85,39 +85,36 @@ login()
 appointments_elems = browser_acuity.find_elements_by_class_name(appointment_button_class)
 appointments = list(map(lambda x : x.get_attribute('id'), appointments_elems))
 print(appointments)
-with open('calls.txt', 'w') as textfile:
-    for id in appointments:
-        person = {}
-        people.append(person)
+for id in appointments:
+    person = {}
+    people.append(person)
 
-        elem = browser_acuity.find_element_by_id(id)
-        elem.click()
-        #Wait for the element to load
-        sleep(0.3)
+    elem = browser_acuity.find_element_by_id(id)
+    elem.click()
+    #Wait for the element to load
+    sleep(0.3)
 
-        #Copy patient's phone number
-        phone_num = copy_phone_num()
-        person['phone_num'] = phone_num
-        textfile.write('{}\n'.format(phone_num))
+    #Copy patient's phone number
+    phone_num = copy_phone_num()
+    person['phone_num'] = phone_num
 
-        #Get a custom reminder message for the client
-        print('Getting custom note...')
-        note = get_custom_note()
-        person['message'] = note
-        textfile.write(note + "\n")
+    #Get a custom reminder message for the client
+    print('Getting custom note...')
+    note = get_custom_note()
+    person['message'] = note
 
-        #input("Press enter after text has been sent")
-        #Edit the note
-        #click_edit_button()
+    #input("Press enter after text has been sent")
+    #Edit the note
+    #click_edit_button()
 
-        
-        #appt_note = datetime.now().strftime("%m/%d %I:%M %p ~ Reminder text sent to client")
-        #edit_note_text(appt_note)
-        #textfile.write(appt_note + "\n\n")
+    
+    #appt_note = datetime.now().strftime("%m/%d %I:%M %p ~ Reminder text sent to client")
+    #edit_note_text(appt_note)
+    #textfile.write(appt_note + "\n\n")
 
-        #click_save_button()
-        sleep(0.2)
-        return_to_appointments()
+    #click_save_button()
+    sleep(0.2)
+    return_to_appointments()
 
 with open('people.json', 'w') as jsonfile:
     json.dump(people, jsonfile)
