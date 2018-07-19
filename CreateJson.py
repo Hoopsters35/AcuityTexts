@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import info, json
+import info, json, re
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -10,6 +10,8 @@ from time import sleep
 #Used to fix broken pipe error on Linux
 #from signal import signal, SIGPIPE, SIG_DFL
 #signal(SIGPIPE,SIG_DFL) 
+
+phone_regex = re.compile(r'\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}')
 
 people = []
 
@@ -34,9 +36,13 @@ def login():
     login_button.click()
 
 def get_phone_num():
-    #TODO: use regex instead f string slice as there could be >1 number
-    phone_num = WebDriverWait(browser_acuity, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href^="tel:"]'))).get_attribute('href')[4:]
-    return phone_num
+    value = WebDriverWait(browser_acuity, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href^="tel:"]'))).get_attribute('href')
+    matches = phone_regex.findall(value)
+    if matches:
+        return matches[0]
+    else:
+        print('Phone number not found')
+        return ""
 
 def get_formatted_name():
     first_name = browser_acuity.find_element_by_css_selector('input[name="first_name"]').get_attribute('value').lower()

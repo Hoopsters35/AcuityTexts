@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from time import sleep
 
 #Load the json file
-jsonfile = open('test.json')
+jsonfile = open('people.json')
 people = json.load(jsonfile)
 jsonfile.close()
 
