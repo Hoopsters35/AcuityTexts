@@ -49,7 +49,7 @@ def get_formatted_name():
     first_name = first_name[0].upper() + first_name[1:]
     last_name = browser_acuity.find_element_by_css_selector('input[name="last_name"]').get_attribute('value').lower()
     last_name = last_name[0].upper() + last_name[1:]
-    if (last_name[0:2] is 'mc'):
+    if (last_name[0:2] == 'Mc'):
         last_name = last_name[:2] + last_name[2].upper() + last_name[3:]
     return ' '.join([first_name, last_name])
 
