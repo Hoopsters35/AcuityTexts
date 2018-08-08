@@ -20,6 +20,7 @@ def login():
     userfield = browser.find_element_by_id('identifierId')
     userfield.send_keys(info.gvoicelogin.username)
     WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.ID, 'identifierNext'))).click()
+    sleep(1)
 
     passfield = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'input[name="password"]')))
     passfield.send_keys(info.gvoicelogin.password)
@@ -27,18 +28,21 @@ def login():
     WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.ID, 'passwordNext'))).click()
 
 def new_message():
+    sleep(0.2)
     WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div[gv-id="send-new-message"]'))).click()
 
 def enter_number(num):
+    sleep(0.2)
     numbox = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'input[placeholder="Type a name or phone number"]')))
     numbox.send_keys(num, Keys.RETURN)
 
 def enter_message(msg):
-    msgbox = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.ID, 'input_0')))
+    sleep(0.2)
+    msgbox = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.ID, 'input_4')))
     msgbox.send_keys(msg, Keys.RETURN)
 
 login()
-sleep(2)
+sleep(3)
 
 for person in people:
     new_message()

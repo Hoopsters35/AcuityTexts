@@ -18,10 +18,10 @@ save_button_css = "input[value='Save Changes']"
 
 def login():
     user_slot = browser_acuity.find_element_by_css_selector('input.input-email')
-    user_slot.send_keys(info.login.username)
+    user_slot.send_keys(info.acuitylogin.username)
 
     pass_slot = browser_acuity.find_element_by_css_selector('input.input-password')
-    pass_slot.send_keys(info.login.password)
+    pass_slot.send_keys(info.acuitylogin.password)
 
     login_button = browser_acuity.find_element_by_css_selector('input.input-login')
     login_button.click()
