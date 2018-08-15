@@ -24,20 +24,20 @@ def login():
 
     passfield = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'input[name="password"]')))
     passfield.send_keys(info.gvoicelogin.password)
-    sleep(0.2)
+    sleep(0.5)
     WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.ID, 'passwordNext'))).click()
 
 def new_message():
-    sleep(0.2)
-    WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div[gv-id="send-new-message"]'))).click()
+    sleep(2)
+    WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div[gv-id="send-new-message"] div.md-button'))).click()
 
 def enter_number(num):
-    sleep(0.2)
+    sleep(1)
     numbox = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'input[placeholder="Type a name or phone number"]')))
     numbox.send_keys(num, Keys.RETURN)
 
 def enter_message(msg):
-    sleep(0.2)
+    sleep(1)
     msgbox = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.ID, 'input_4')))
     msgbox.send_keys(msg, Keys.RETURN)
 
@@ -45,10 +45,16 @@ login()
 sleep(3)
 
 for person in people:
-    new_message()
+    try:
+        new_message()
 
-    num = person['phone_num']
-    enter_number(num)
+        num = person['phone_num']
+        enter_number(num)
 
-    msg = person['message']
-    enter_message(msg)
+        msg = person['message']
+        enter_message(msg)
+
+        people.remove(person)
+    finally:
+        with open('people.json', 'w') as datafile:
+            json.dump(people, datafile)

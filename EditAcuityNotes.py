@@ -56,16 +56,20 @@ appointments_elems = browser_acuity.find_elements_by_class_name(appointment_butt
 appointments = list(map(lambda x : x.get_attribute('id'), appointments_elems))
 
 for id in appointments:
+    sleep(0.5)
     elem = WebDriverWait(browser_acuity, 10).until(EC.presence_of_element_located((By.ID, id)))
     elem.click()
 
     appt_note = datetime.now().strftime("%m/%d %I:%M %p ~ Reminder text sent to client")
 
+    sleep(0.5)
     click_edit_button()
 
+    sleep(0.5)
     edit_note_text(appt_note)
 
+    sleep(0.5)
     click_save_button()
 
-    sleep(0.2)
+    sleep(0.5)
     return_to_appointments()
